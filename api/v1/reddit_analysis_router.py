@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from api.adapters.reddit_adapter import search_reddit_items
 from api.services.analyzer import analyze_items
 from fastapi import APIRouter, Depends
-from db.database import get_db
+from db.database_old import get_db
 from sqlalchemy.orm import Session
 from db.crud.internet_post_crud import save_items_to_db
 router = APIRouter()

@@ -1,42 +1,20 @@
 # backend/db/crud/analyzable_item.py
 
 from typing import List
-from sqlalchemy.ext.asyncio import AsyncSession
-from schemas import AnalyzableItem
+from sqlalchemy.orm import Session
 from db.models.AnalyzableItem import AnalyzableItemDBModel
-from sqlalchemy import select
-async def filter_existing_items(items: List[AnalyzableItem]) -> List[AnalyzableItem]:
-    unique = []
-    seen_urls = set()
+from schemas import AnalyzableItem  # 你的数据模型
 
-    for item in items:
-        if item.url in seen_urls:
-            continue
-        seen_urls.add(item.url)
-        unique.append(item)
+def filter_existing_items_sync(db: Session, items: List[AnalyzableItem]) -> List[AnalyzableItem]:
+    urls = [item.url for item in items if item.url]
+    existing = db.query(AnalyzableItemDBModel.url).filter(AnalyzableItemDBModel.url.in_(urls)).all()
+    existing_urls = set(row[0] for row in existing)
+    return [item for item in items if item.url and item.url not in existing_urls]
 
-    return unique
-
-
-async def save_items_to_db_if_not_exists(
-    session: AsyncSession,
-    items: List[AnalyzableItem]
-) -> List[AnalyzableItem]:
+def save_items_to_db_if_not_exists_sync(db: Session, items: List[AnalyzableItem]) -> List[AnalyzableItem]:
     if not items:
         return []
-
-    # 提取所有非空 URL
-    urls = [item.url for item in items if item.url]
-
-    # 查询 DB 中已有的 URL
-    stmt = select(AnalyzableItemDBModel.url).where(AnalyzableItemDBModel.url.in_(urls))
-    result = await session.execute(stmt)
-    existing_urls = set(row[0] for row in result.fetchall())
-
-    # 过滤出新项
-    new_items = [item for item in items if item.url and item.url not in existing_urls]
-
-    # 构造并入库
+    new_items = filter_existing_items_sync(db, items)
     for item in new_items:
         db_item = AnalyzableItemDBModel(
             platform=item.platform,
@@ -48,7 +26,6 @@ async def save_items_to_db_if_not_exists(
             comments=item.comments,
             shares=item.shares,
         )
-        session.add(db_item)
-
-    await session.commit()
+        db.add(db_item)
+    db.commit()
     return new_items

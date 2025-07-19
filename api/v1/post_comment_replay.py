@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from db.database import SessionLocal
+from db.database_old import SessionLocal
 from db.models import post_model, comment_model, reply_model, user_model
 from schemas import post_schemas, comment_schemas, reply_schemas
 from datetime import datetime

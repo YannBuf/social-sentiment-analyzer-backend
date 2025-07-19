@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import random
 
-from db.database import SessionLocal, sync_engine
-from db.models.dashboard_model import Base, MonitorTask, MonitorStatus
+from db.database import SessionLocal, engine, Base
+from db.models.dashboard_model import MonitorTask, MonitorStatus
 from pydantic import BaseModel
 from typing import List, Dict
 from api.auth.dependencies import get_db, get_current_user
@@ -11,7 +11,7 @@ from db.models.user import User
 
 
 # 初始化建表
-Base.metadata.create_all(bind=sync_engine)
+Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 

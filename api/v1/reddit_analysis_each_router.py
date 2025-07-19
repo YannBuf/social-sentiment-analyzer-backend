@@ -7,7 +7,7 @@ from typing import List
 from api.adapters.reddit_adapter import search_reddit_items
 from api.services.analyzer_each_post import analyze_items_batch
 from db.crud.internet_post_crud import save_items_to_db
-from db.database import get_db
+from db.database_old import get_db
 
 router = APIRouter()
 
