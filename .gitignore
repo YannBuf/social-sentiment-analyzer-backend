@@ -1,0 +1,11 @@
+# backend/.gitignore
+
+# Python 编译缓存
+__pycache__/
+*.pyc
+
+# 虚拟环境
+.venv/
+
+# 环境变量配置
+.env
