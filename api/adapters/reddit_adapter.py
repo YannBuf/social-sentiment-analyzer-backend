@@ -5,17 +5,27 @@ import asyncio
 from datetime import datetime
 from typing import List
 from db.models.data_unit import AnalyzableItem
-from core.config import Settings
 from api.adapters.Base_Adapter import BasePlatformAdapter  # 你定义的抽象基类
+from dotenv import load_dotenv
+import os
+
+# 加载根目录或当前目录下的 .env 文件
+load_dotenv()
 
 class RedditAdapter(BasePlatformAdapter):
     def __init__(self):
-        self.reddit = asyncpraw.Reddit(
-            client_id=Settings.CLIENT_ID,
-            client_secret=Settings.CLIENT_SECRET,
-            user_agent=Settings.USER_AGENT,
-        )
+        client_id = os.getenv("CLIENT_ID")
+        client_secret = os.getenv("CLIENT_SECRET")
+        user_agent = os.getenv("USER_AGENT")
 
+        if not client_id or not client_secret or not user_agent:
+            raise ValueError("Reddit API credentials not set in environment variables")
+
+        self.reddit = asyncpraw.Reddit(
+            client_id=client_id,
+            client_secret=client_secret,
+            user_agent=user_agent,
+        )
 
     async def fetch(self, query: str, limit: int, since: datetime, until: datetime | None = None, include_comments: bool = True) -> List[AnalyzableItem]:
         subreddit = await self.reddit.subreddit("all")
@@ -40,7 +50,6 @@ class RedditAdapter(BasePlatformAdapter):
         results = await asyncio.gather(*tasks, return_exceptions=True)
         items = [res for res in results if isinstance(res, AnalyzableItem)]
         return items
-
 
 async def fetch_post_details(submission, include_comments: bool = False) -> AnalyzableItem:
     try:
