@@ -58,7 +58,7 @@ def get_monitor_list(
     # 补充 lastUpdate 字段，可以根据你的业务逻辑生成时间字符串
     def format_last_update(monitor: MonitorTask) -> str:
         # 假设用更新时间字段，或简单写死一个字符串
-        return "刚刚更新"
+        return "Just updated"
 
     result = []
     for m in monitors:
