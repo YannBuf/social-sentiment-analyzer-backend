@@ -3,26 +3,36 @@ from fastapi import APIRouter, HTTPException
 router = APIRouter()
 
 platform_mentions = [
-    {"platform": "Twitter", "mentions": 12000},
-    {"platform": "Facebook", "mentions": 15000},
-    {"platform": "Instagram", "mentions": 9000},
-    {"platform": "Weibo", "mentions": 7000},
-    {"platform": "LinkedIn", "mentions": 3000},
+    {"platform": "X", "mentions": 1100},
+    {"platform": "Reddit", "mentions": 850},
+    {"platform": "YouTube", "mentions": 500},
+    {"platform": "Facebook", "mentions": 272}
 ]
 
+
 platform_sentiments = {
-    "Twitter": [
-        {"name": "正面", "value": 4000},
-        {"name": "中性", "value": 6000},
-        {"name": "负面", "value": 2000},
+    "X": [
+        {"name": "Positive", "value": 650},
+        {"name": "Neutral", "value": 300},
+        {"name": "Negative", "value": 150},
+    ],
+    "Reddit": [
+        {"name": "Positive", "value": 470},
+        {"name": "Neutral", "value": 230},
+        {"name": "Negative", "value": 150},
+    ],
+    "YouTube": [
+        {"name": "Positive", "value": 310},
+        {"name": "Neutral", "value": 110},
+        {"name": "Negative", "value": 80},
     ],
     "Facebook": [
-        {"name": "正面", "value": 3000},
-        {"name": "中性", "value": 8000},
-        {"name": "负面", "value": 4000},
-    ],
-    # 你可以继续补充
+        {"name": "Positive", "value": 130},
+        {"name": "Neutral", "value": 60},
+        {"name": "Negative", "value": 82},
+    ]
 }
+
 
 @router.get("/platforms/mentions")
 async def get_platform_mentions():
